@@ -7,19 +7,19 @@ jobs:
     name: Check
     runs-on: ubuntu-latest
     # Execute the checks inside the container instead the VM.
-    container: golangci/golangci-lint:v1.27.0-alpine
+    container: golangci/golangci-lint:v1.31.0-alpine
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - run: ./hack/scripts/check.sh
 
   unit-test:
     name: Unit test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: actions/setup-go@v2-beta
         with:
-          go-version: 1.14
+          go-version: 1.15
       - run: make ci-unit-test
 
   integration-test:
@@ -28,9 +28,9 @@ jobs:
     needs: [check, unit-test]
     strategy:
       matrix:
-        kubernetes: [1.16.9, 1.17.5, 1.18.2]
+        kubernetes: [1.16.15, 1.17.11, 1.18.8, 1.19.1]
     env:
-      KIND_VERSION: v0.8.1
+      KIND_VERSION: v0.9.0
     steps:
       - uses: actions/checkout@v1
       # Prepare for SSH tunnels with Serveo so we can expose the webhooks on integration tests.
